@@ -3,10 +3,11 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import ProtectedRoute from './components/ProtectedRoute';
 import DashboardPage from './pages/DashboardPage';
 import LoginPage from './pages/LoginPage';
+import RegisterPage from './pages/RegisterPage';
 import './App.css';
 
 function App() {
-  localStorage.setItem('isAuthenticated', 'false');
+  // localStorage.setItem('isAuthenticated', 'false');
   return (
     <Router>
       <Routes>
@@ -14,6 +15,7 @@ function App() {
         <Route path="/" element={<ProtectedRoute>
               <DashboardPage />
             </ProtectedRoute>} />
+        <Route path="/register" element={<RegisterPage />} />
       </Routes>
     </Router>
   );

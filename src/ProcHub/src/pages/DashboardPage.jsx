@@ -6,6 +6,7 @@ import { Box, Paper, Typography, Grid, CircularProgress, Chip } from "@mui/mater
 import MemoryIcon from '@mui/icons-material/Memory';
 import StorageIcon from '@mui/icons-material/Storage';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
+import { useNavigate } from 'react-router-dom';
 
 const DashboardPage = () => {
   const [isSidebarOpen, setSidebarOpen] = useState(true);
@@ -23,6 +24,20 @@ const DashboardPage = () => {
     processCount: 0
   });
   const socketRef = useRef(null);
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    try {
+      await fetch('http://localhost:8888/logout', {
+        method: 'POST',
+        credentials: 'include',
+      });
+    } catch (error) {
+      console.error('Logout failed:', error);
+    }
+  
+    navigate('/login');
+  };
 
   useEffect(() => {
     // Update system uptime every second starting from 0
@@ -280,7 +295,7 @@ const DashboardPage = () => {
 
   return (
     <div>
-      <Navbar onMenuClick={handleMenuClick} />
+      <Navbar onMenuClick={handleMenuClick} onLogout={handleLogout}/>
       
       {/* System Stats Summary */}
       <Box sx={{ p: 2 }}>

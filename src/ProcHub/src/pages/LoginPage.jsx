@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Box, Button, Paper, Typography, TextField, CircularProgress } from '@mui/material';
 import LoginIcon from '@mui/icons-material/Login';
-import { Navigate } from 'react-router-dom';
+import { Navigate, Link } from 'react-router-dom';
 
 const LoginPage = () => {
   const [username, setUsername] = useState('');
@@ -11,41 +11,95 @@ const LoginPage = () => {
   const [usernameError, setUsernameError] = useState('');
   const [passwordError, setPasswordError] = useState('');
 
+  useEffect(() => {
+    fetch('http://localhost:8888/', {
+      method: 'GET',
+      credentials: 'include'
+    })
+    .then(res => res.json())
+    .then(data => {
+      if (data.user) {
+        setIsAuthenticated(true);
+      }
+    });
+  }, []);
+
+  // const handleLogin = () => {
+  //   setUsernameError('');
+  //   setPasswordError('');
+
+  //   const usernameRegex = /^[a-zA-Z][a-zA-Z0-9_.-]{2,31}$/; // Allow only letters, numbers, and underscores
+  //   if (!usernameRegex.test(username)) {
+  //     setUsernameError('Username must only contain letters, numbers, and underscores.');
+  //     return;
+  //   }
+  //   if (username.length < 3 || username.length > 20) {
+  //     setUsernameError('Username must be between 3 and 20 characters.');
+  //     return;
+  //   }
+
+  //   // Validate password
+  //   const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/; 
+  //   // Password should be at least 8 characters long, include at least 1 letter, 1 number, and 1 special character
+  //   if (!passwordRegex.test(password)) {
+  //     setPasswordError('Password must be at least 8 characters long, include at least 1 letter, 1 number, and 1 special character.');
+  //     return;
+  //   }
+
+  //   setIsLoading(true);
+  //   // Simulate login process (replace with actual login logic)
+  //   setTimeout(() => {
+  //     if (username && password) {
+  //       console.log('Login successful!');
+  //       setIsAuthenticated(true); // Simulate a successful login
+  //       localStorage.setItem('isAuthenticated', 'true');
+  //     } else {
+  //       alert('Please enter a valid username and password');
+  //     }
+  //     setIsLoading(false);
+  //   }, 1000); // Simulating network delay
+  // };
   const handleLogin = () => {
     setUsernameError('');
     setPasswordError('');
-
-    const usernameRegex = /^[a-zA-Z][a-zA-Z0-9_.-]{2,31}$/; // Allow only letters, numbers, and underscores
+  
+    const usernameRegex = /^[a-zA-Z][a-zA-Z0-9_.-]{2,31}$/;
     if (!usernameRegex.test(username)) {
       setUsernameError('Username must only contain letters, numbers, and underscores.');
       return;
     }
-    if (username.length < 3 || username.length > 20) {
-      setUsernameError('Username must be between 3 and 20 characters.');
-      return;
-    }
-
-    // Validate password
-    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/; 
-    // Password should be at least 8 characters long, include at least 1 letter, 1 number, and 1 special character
+  
+    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/;
     if (!passwordRegex.test(password)) {
       setPasswordError('Password must be at least 8 characters long, include at least 1 letter, 1 number, and 1 special character.');
       return;
     }
-
+  
     setIsLoading(true);
-    // Simulate login process (replace with actual login logic)
-    setTimeout(() => {
-      if (username && password) {
-        console.log('Login successful!');
-        setIsAuthenticated(true); // Simulate a successful login
-        localStorage.setItem('isAuthenticated', 'true');
-      } else {
-        alert('Please enter a valid username and password');
+  
+    fetch('http://localhost:8888/login', {
+      method: 'POST',
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username, password })
+    })
+    .then(async (res) => {
+      if (!res.ok) {
+        throw new Error('Login failed');
       }
+      return res.json();
+    })
+    .then(() => {
+      setIsAuthenticated(true);
+    })
+    .catch(err => {
+      alert(err.message);
+    })
+    .finally(() => {
       setIsLoading(false);
-    }, 1000); // Simulating network delay
+    });
   };
+  
 
   if (isAuthenticated) {
     return <Navigate to="/" />; // Redirect to dashboard after login
@@ -123,7 +177,10 @@ const LoginPage = () => {
         >
           Log In
         </Button>
-
+        <Typography variant="body2" sx={{ mt: 2 }}>
+          Don’t have an account?{' '}
+          <Link to="/register" style={{ color: '#1976d2', textDecoration: 'none' }}>Create one</Link>
+        </Typography>
         <Typography variant="body2" sx={{ mt: 3, color: '#888' }}>
           Sign in to access the application.
         </Typography>

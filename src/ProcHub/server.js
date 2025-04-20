@@ -10,6 +10,12 @@ import { WebSocketServer } from 'ws';
 import { createConnection } from 'net';
 import { dirname } from 'path';
 import { fileURLToPath } from 'url';
+import session from 'express-session';
+import cors from 'cors';
+import fs from 'fs/promises';
+import bcrypt from 'bcrypt';
+import { initDB } from './db.js';
+
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const app = express();
@@ -24,8 +30,122 @@ const TCP_PORT = 8000;            // QNX server is running on port 8000
 const MAX_RECONNECT_ATTEMPTS = 5;
 const RECONNECT_DELAY = 3000; // 3 seconds
 
+let db;
+initDB().then((database) => {
+  db = database;
+});
+
+
+app.use(express.json());
+
+app.use(cors({
+  origin: 'http://localhost:5174', // or wherever your React app is
+  credentials: true
+}));
+
+app.use(session({
+  secret: 'super-secret-key', // store this in env vars in real apps
+  resave: false,
+  saveUninitialized: false,
+  cookie: {
+    secure: false, // true if using HTTPS
+    httpOnly: true,
+    maxAge: 1000 * 60 * 60 // 1 hour
+  }
+}));
+
 // Serve the static frontend files
 app.use(express.static('dist'));
+
+
+const fakeUser = {
+  username: 'admin',
+  password: 'Admin123!' 
+};
+
+// Register route
+app.post('/register', async (req, res) => {
+  const { firstname, lastname, username, password } = req.body;
+
+  if (!username || !password || !firstname || !lastname) {
+    return res.status(400).json({ error: 'All fields are required.' });
+  }
+
+  try {
+    const db = await initDB();
+    const salt = new Date().toISOString()
+    const hashedPassword = await bcrypt.hash(password, salt)
+
+    await db.run(
+      `INSERT INTO users (username, password, firstname, lastname) VALUES (?, ?, ?, ?)`,
+      username, 
+      hashedPassword, 
+      firstname, 
+      lastname
+    );
+
+    res.status(201).json({ message: 'User created successfully.' });
+  } catch (error) {
+    console.error('Error creating user:', error);
+    res.status(500).json({ error: 'Failed to create user.' });
+  }
+
+})
+
+// Login route
+app.post('/login', async (req, res) => {
+  const { username, password } = req.body;
+
+  try {
+    const data = await fs.readFile('./users.json', 'utf-8');
+    const users = JSON.parse(data);
+
+    // const user = users.find(u => u.username === username);
+    const user = await db.get('SELECT * FROM users WHERE username = ?', username);
+
+    if (!user) {
+      return res.status(401).json({ error: 'Invalid credentials' });
+    }
+
+    const isMatch = await bcrypt.compare(password, user.password);
+
+    if (!isMatch) {
+      console.log(await bcrypt.hash(password, 10));
+      return res.status(401).json({ error: 'Invalid credentials' });
+    }
+
+    req.session.user = { username };
+    res.json({ message: 'Login successful' });
+
+  } catch (error) {
+    console.error('Login error:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+
+  // if (username === fakeUser.username && password === fakeUser.password) {
+  //   req.session.user = { username };
+  //   res.json({ message: 'Login successful' });
+  // } else {
+  //   res.status(401).json({ error: 'Invalid credentials' });
+  // }
+});
+
+// Logout route
+app.post('/logout', (req, res) => {
+  req.session.destroy(() => {
+    res.clearCookie('connect.sid');
+    res.json({ message: 'Logged out' });
+  });
+});
+
+// Auth check
+app.get('/me', (req, res) => {
+  if (req.session.user) {
+    res.json({ user: req.session.user });
+  } else {
+    res.status(401).json({ error: 'Not authenticated' });
+  }
+});
 
 // Store active TCP connections
 const connections = new Map();
