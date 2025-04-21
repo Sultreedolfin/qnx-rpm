@@ -24,41 +24,6 @@ const LoginPage = () => {
     });
   }, []);
 
-  // const handleLogin = () => {
-  //   setUsernameError('');
-  //   setPasswordError('');
-
-  //   const usernameRegex = /^[a-zA-Z][a-zA-Z0-9_.-]{2,31}$/; // Allow only letters, numbers, and underscores
-  //   if (!usernameRegex.test(username)) {
-  //     setUsernameError('Username must only contain letters, numbers, and underscores.');
-  //     return;
-  //   }
-  //   if (username.length < 3 || username.length > 20) {
-  //     setUsernameError('Username must be between 3 and 20 characters.');
-  //     return;
-  //   }
-
-  //   // Validate password
-  //   const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/; 
-  //   // Password should be at least 8 characters long, include at least 1 letter, 1 number, and 1 special character
-  //   if (!passwordRegex.test(password)) {
-  //     setPasswordError('Password must be at least 8 characters long, include at least 1 letter, 1 number, and 1 special character.');
-  //     return;
-  //   }
-
-  //   setIsLoading(true);
-  //   // Simulate login process (replace with actual login logic)
-  //   setTimeout(() => {
-  //     if (username && password) {
-  //       console.log('Login successful!');
-  //       setIsAuthenticated(true); // Simulate a successful login
-  //       localStorage.setItem('isAuthenticated', 'true');
-  //     } else {
-  //       alert('Please enter a valid username and password');
-  //     }
-  //     setIsLoading(false);
-  //   }, 1000); // Simulating network delay
-  // };
   const handleLogin = () => {
     setUsernameError('');
     setPasswordError('');

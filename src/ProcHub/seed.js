@@ -1,15 +1,15 @@
-// seed.js
 import { initDB } from './db.js';
 import bcrypt from 'bcrypt';
 
+// Creates the database and adds admin account
 const seed = async () => {
   const db = await initDB();
   const username = 'admin';
   const password = 'Admin123!';
   const firstname = 'admin';
   const lastname = 'admin';
-  const salt = new Date().toISOString();
-  const hashedPassword = await bcrypt.hash(password, 10);
+  const salt = 10;
+  const hashedPassword = await bcrypt.hash(password, salt);
 
   try {
     await db.run(

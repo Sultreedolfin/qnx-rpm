@@ -37,14 +37,6 @@ const RegisterPage = () => {
       alert('Something went wrong.');
     }
   };
-  
-//   if (isLoading) {
-//     return (
-//       <Box display="flex" justifyContent="center" alignItems="center" height="100vh">
-//         <CircularProgress />
-//       </Box>
-//     );
-//   }
 
   return (
     <Box
@@ -78,8 +70,6 @@ const RegisterPage = () => {
           value={firstname}
           onChange={(e) => setFirstname(e.target.value)}
           sx={{ mb: 2 }}
-        //   error={!!usernameError}
-        //   helperText={usernameError}
         />
 
         <TextField
@@ -89,8 +79,6 @@ const RegisterPage = () => {
           value={lastname}
           onChange={(e) => setLastname(e.target.value)}
           sx={{ mb: 2 }}
-        //   error={!!usernameError}
-        //   helperText={usernameError}
         />
 
         <TextField
@@ -100,8 +88,6 @@ const RegisterPage = () => {
           value={username}
           onChange={(e) => setUsername(e.target.value)}
           sx={{ mb: 2 }}
-        //   error={!!usernameError}
-        //   helperText={usernameError}
         />
 
         <TextField
@@ -112,8 +98,6 @@ const RegisterPage = () => {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           sx={{ mb: 2 }}
-        //   error={!!passwordError}
-        //   helperText={passwordError}
         />
 
         <TextField
@@ -124,8 +108,6 @@ const RegisterPage = () => {
           value={password}
         //   onChange={(e) => setPassword(e.target.value)}
           sx={{ mb: 2 }}
-        //   error={!!passwordError}
-        //   helperText={passwordError}
         /> 
 
         <Button

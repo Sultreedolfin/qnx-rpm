@@ -2,8 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { Navigate } from 'react-router-dom';
 
 const ProtectedRoute = ({ children }) => {
-  // Check if the user is authenticated (use your own logic here)
-  // const isAuthenticated = localStorage.getItem('isAuthenticated') === 'true'; // Example check from localStorage
   const [authChecked, setAuthChecked] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
@@ -31,7 +29,7 @@ const ProtectedRoute = ({ children }) => {
     return <Navigate to="/login" />;
   }
 
-  // If authenticated, render the children components (e.g., the Dashboard)
+  // If authenticated, render the children components
   return children;
 };
 

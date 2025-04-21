@@ -57,12 +57,6 @@ app.use(session({
 // Serve the static frontend files
 app.use(express.static('dist'));
 
-
-const fakeUser = {
-  username: 'admin',
-  password: 'Admin123!' 
-};
-
 // Register route
 app.post('/register', async (req, res) => {
   const { firstname, lastname, username, password } = req.body;
@@ -73,7 +67,7 @@ app.post('/register', async (req, res) => {
 
   try {
     const db = await initDB();
-    const salt = new Date().toISOString()
+    const salt = 10;
     const hashedPassword = await bcrypt.hash(password, salt)
 
     await db.run(
@@ -97,10 +91,6 @@ app.post('/login', async (req, res) => {
   const { username, password } = req.body;
 
   try {
-    const data = await fs.readFile('./users.json', 'utf-8');
-    const users = JSON.parse(data);
-
-    // const user = users.find(u => u.username === username);
     const user = await db.get('SELECT * FROM users WHERE username = ?', username);
 
     if (!user) {
@@ -121,13 +111,6 @@ app.post('/login', async (req, res) => {
     console.error('Login error:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
-
-  // if (username === fakeUser.username && password === fakeUser.password) {
-  //   req.session.user = { username };
-  //   res.json({ message: 'Login successful' });
-  // } else {
-  //   res.status(401).json({ error: 'Invalid credentials' });
-  // }
 });
 
 // Logout route
@@ -166,7 +149,7 @@ wss.on('connection', (ws) => {
     });
     
     // Store this connection
-    const connectionId = Date.now().toString();
+    const connectionId = 10;
     connections.set(connectionId, { ws, tcpClient });
     
     // Handle TCP data and forward to WebSocket
