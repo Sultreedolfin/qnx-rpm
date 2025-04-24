@@ -3,7 +3,8 @@
 **/package-lock.json
 **/yarn.lock
 
-
+# Website db
+**/database.sqlite
 
 # QNX specific
 **/proc-monitor

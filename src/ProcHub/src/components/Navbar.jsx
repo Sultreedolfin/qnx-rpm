@@ -20,6 +20,8 @@ import { useAuth0 } from "@auth0/auth0-react";
 import LoginButton from "./LoginButton";
 import Profile from "./Profile";
 import { Button } from "@mui/material";
+import { Logout } from "@mui/icons-material";
+import LogoutButton from "./LogoutButton";
 
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
@@ -64,7 +66,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 const Navbar = ({ onMenuClick }) => {
   const [anchorEl, setAnchorEl] = useState(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = useState(null);
-  const { isAuthenticated } = useAuth0();
+  // const { isAuthenticated } = useAuth0();
 
   const isMenuOpen = Boolean(anchorEl);
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
@@ -186,11 +188,7 @@ const Navbar = ({ onMenuClick }) => {
           </Search>
           <Box sx={{ flexGrow: 1 }} />
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            {!isAuthenticated ? (
-              <LoginButton />
-            ) : (
-              <Profile />
-            )}
+            <LogoutButton />
           </Box>
         </Toolbar>
       </AppBar>

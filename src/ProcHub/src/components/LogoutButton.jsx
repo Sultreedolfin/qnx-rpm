@@ -4,10 +4,10 @@ import { Button } from '@mui/material';
 import LogoutIcon from '@mui/icons-material/Logout';
 
 const LogoutButton = () => {
-  const { logout, isAuthenticated } = useAuth0();
+  // const { logout, isAuthenticated } = useAuth0();
 
   return (
-    isAuthenticated && (
+    // isAuthenticated && (
       <Button 
         color="inherit" 
         onClick={() => logout({ returnTo: window.location.origin })}
@@ -15,7 +15,7 @@ const LogoutButton = () => {
       >
         Log Out
       </Button>
-    )
+    // )
   );
 };
 
